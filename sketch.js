@@ -38,8 +38,8 @@ function earlyBirdFilter(img){
   //pass resultImginto sepiaFilter
   resultImg = sepiaFilter(imgIn);
   resultImg = darkCorners(resultImg);
-  // resultImg = radialBlurFilter(resultImg);
-  // resultImg = borderFilter(resultImg)
+   resultImg = radialBlurFilter(resultImg);
+   resultImg = borderFilter(resultImg)
   return resultImg;
 }
 
@@ -113,4 +113,40 @@ function darkCorners(img){
   }
   img.updatePixels();
   return img;
+}
+
+function radialBlurFilter(img){
+  img.loadPixels();
+
+  for(var x = 0; x < img.width; x++){
+    for(var y = 0; y <img.height; y++){
+      var pixelIndex = ((img.width * y)+ x)* 4;
+      var oldRed = img.pixels[pixelIndex+0];
+      var oldGreen = img.pixels[pixelIndex+1];
+      var oldBlue = img.pixels[pixelIndex+2];
+
+      var c = convolution(x,y,matrix,matrix.length,img);
+
+      var mouseDist = abs(dist(x,y,mouseX,MouseY));
+      var dynBlur = map(MouseDIst,100,300,0,1);
+      dynBlur = constrain(dynBlur,0,1);
+
+      //calculate new RBG value
+      var newRed = c[0]*dynBlur + oldRed*(1-dynBlur)
+      var newGreen = c[1]*dynBlur + oldGreen*(1-dynBlur)
+      var newBlue = c[2]*dynBlur + oldBlue*(1-dynBlur)
+
+      //update each pixel with new RGB value 
+      img.pixels[pixelIndex+0] = newRed;
+      img.pixels[pixelIndex+1] = newGreen;
+      img.pixels[pixelIndex+2] = newBlue;
+    
+    }
+  }
+  img.updatePixels();
+  return img; 
+}
+
+function borderFilter(img){
+
 }
