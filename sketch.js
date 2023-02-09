@@ -36,8 +36,8 @@ function earlyBirdFilter(img){
   //make a copy of imgIn to resulting 
   resultImg.copy(imgIn,0,0,imgIn.width, imgIn.height,0,0,imgIn.width, imgIn.height);
   //pass resultImginto sepiaFilter
-   resultImg = sepiaFilter(imgIn);
-  // resultImg = darkCorners(resultImg);
+  resultImg = sepiaFilter(imgIn);
+  resultImg = darkCorners(resultImg);
   // resultImg = radialBlurFilter(resultImg);
   // resultImg = borderFilter(resultImg)
   return resultImg;
@@ -77,13 +77,40 @@ function sepiaFilter(img){
   return img;
 }
 
-function darkCorners(){
+function darkCorners(img){
   img.loadPixels();
   var midX = img.width/2;
   var midY = img.height/2;
   //calculate the distance between from (0,0) to center - max distance
   var maxDist = abs(dist(midX,midY,0,0));
   var dynLum = 1;
+  for(var x = 0; x < img.width; x++){
+    for(var y = 0; y < img.height; y++){
+      //calculate the pixel distance away from the center
+      var d = abs(dist(midX,midY,x,y));
 
+      if(d>300){
+        var pixelIndex = ((img.width * y)+ x)* 4;
+        var oldRed = img.pixels[pixelIndex+0];
+        var oldGreen = img.pixels[pixelIndex+1];
+        var oldBlue = img.pixels[pixelIndex+2];
 
+        if(d<=450){//for 300 to 450 distance
+          dynLum = map(d,300,450,1,0.4)
+        }
+        else{//for above 450 to maxDist
+          dynLum = map(d,450,maxDist,0.4,0);
+        }
+        //constrain dynlum value 0 to 1
+        dynLum = constrain(dynLum,0,1);
+        //update each pixel with new RGB value 
+        img.pixels[pixelIndex+0] = oldRed*dynLum;
+        img.pixels[pixelIndex+1] = oldGreen*dynLum;
+        img.pixels[pixelIndex+2] = oldBlue*dynLum;
+      
+      }
+    }
+  }
+  img.updatePixels();
+  return img;
 }
