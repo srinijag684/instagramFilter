@@ -115,6 +115,25 @@ function darkCorners(img){
   return img;
 }
 
+function borderFilter(img){
+
+  var tempImg = createGraphics(img.width, img.height);
+  tempImg.image(img,0,0);
+
+  tempImg.noFill();
+  tempImg.stroke(255);
+  tempImg.strokeWeight(20);
+  tempImg.rect(0,0,img.width,img.height,50);
+
+  tempImg.noFill();
+  tempImg.stroke(255);
+  tempImg.strokeWeight(20);
+  tempImg.rect(0,0,img.width,img.height);
+
+  return tempImg;
+
+}
+
 function radialBlurFilter(img){
   img.loadPixels();
 
@@ -127,8 +146,8 @@ function radialBlurFilter(img){
 
       var c = convolution(x,y,matrix,matrix.length,img);
 
-      var mouseDist = abs(dist(x,y,mouseX,MouseY));
-      var dynBlur = map(MouseDIst,100,300,0,1);
+      var mouseDist = abs(dist(x,y,mouseX,mouseY));
+      var dynBlur = map(mouseDist,100,300,0,1);
       dynBlur = constrain(dynBlur,0,1);
 
       //calculate new RBG value
@@ -147,6 +166,28 @@ function radialBlurFilter(img){
   return img; 
 }
 
-function borderFilter(img){
+function convolution(x, y, matrix, matrixSize, img) {
+  var totalRed = 0.0;
+  var totalGreen = 0.0;
+  var totalBlue = 0.0;
+  var offset = floor(matrixSize / 2);
 
+  // convolution matrix loop
+  for (var i = 0; i < matrixSize; i++) {
+      for (var j = 0; j < matrixSize; j++) {
+          // Get pixel loc within convolution matrix
+          var xloc = x + i - offset;
+          var yloc = y + j - offset;
+          var index = (xloc + img.width * yloc) * 4;
+          // ensure we don't address a pixel that doesn't exist
+          index = constrain(index, 0, img.pixels.length - 1);
+
+          // multiply all values with the mask and sum up
+          totalRed += img.pixels[index + 0] * matrix[i][j];
+          totalGreen += img.pixels[index + 1] * matrix[i][j];
+          totalBlue += img.pixels[index + 2] * matrix[i][j];
+      }
+  }
+  // return the new color as an array
+  return [totalRed, totalGreen, totalBlue];
 }
