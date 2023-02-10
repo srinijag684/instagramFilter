@@ -36,7 +36,7 @@ function earlyBirdFilter(img){
   //make a copy of imgIn to resulting 
   resultImg.copy(imgIn,0,0,imgIn.width, imgIn.height,0,0,imgIn.width, imgIn.height);
   //pass resultImginto sepiaFilter
-  resultImg = sepiaFilter(imgIn);
+  resultImg = sepiaFilter(resultImg);
   resultImg = darkCorners(resultImg);
    resultImg = radialBlurFilter(resultImg);
    resultImg = borderFilter(resultImg)
