@@ -3,7 +3,6 @@
 
 var imgIn;
 var imgOut;
-var instruction='1) Change right image filter to RED  by pressing "R" key,\n 2) Change right image filter to BLUE  by pressing "B" key,\n 3) Change right image filter to GREEN  by pressing "G" key, 4) Change right image filter to Grey Scale  by pressing "Left Arrow" key,\n 5) Change right image filter to Negative Scale  by pressing "Right Arrow" key, 6) Change right image filter to Radial Blur  by pressing "UP" key, \n 7) Reset to original by clicking left mouse button';
 var matrix = [
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
@@ -28,9 +27,6 @@ function draw() {
     image(imgIn, 0, 0);
     image(earlyBirdFilter(imgIn), imgIn.width, 0);
     noLoop();
-    fill(0); 
-    textSize(16);
-    text(instruction,10,750);
 }
 /////////////////////////////////////////////////////////////////
 function mousePressed(){
