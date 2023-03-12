@@ -1,6 +1,9 @@
 // Image of Husky Creative commons from Wikipedia:
 // https://en.wikipedia.org/wiki/Dog#/media/File:Siberian_Husky_pho.jpg
+
 var imgIn;
+var imgOut;
+var instruction='1) Change right image filter to RED  by pressing "R" key,\n 2) Change right image filter to BLUE  by pressing "B" key,\n 3) Change right image filter to GREEN  by pressing "G" key, 4) Change right image filter to Grey Scale  by pressing "Left Arrow" key,\n 5) Change right image filter to Negative Scale  by pressing "Right Arrow" key, 6) Change right image filter to Radial Blur  by pressing "UP" key, \n 7) Reset to original by clicking left mouse button';
 var matrix = [
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
@@ -25,6 +28,9 @@ function draw() {
     image(imgIn, 0, 0);
     image(earlyBirdFilter(imgIn), imgIn.width, 0);
     noLoop();
+    fill(0); 
+    textSize(16);
+    text(instruction,10,750);
 }
 /////////////////////////////////////////////////////////////////
 function mousePressed(){
@@ -190,4 +196,159 @@ function convolution(x, y, matrix, matrixSize, img) {
   }
   // return the new color as an array
   return [totalRed, totalGreen, totalBlue];
+}
+
+function greyScale(img)
+{
+    img.loadPixels();
+    for(var x=0;x<img.width;x++)
+        {
+            for(var y=0;y<img.width;y++)
+                {
+                    var pixelIndex=((img.width*y)+x)*4;
+                    var oldRed=img.pixels[pixelIndex+0]
+                    var oldGreen=img.pixels[pixelIndex+1]
+                    var oldBlue=img.pixels[pixelIndex+2];
+                    //averge of all the three colours are stored in variable grey
+                    var grey=(oldRed+oldGreen+oldBlue)/3
+              		// red, green and blue to hold the value of variable grey
+              		img.pixels[pixelIndex+0]=grey;
+              		img.pixels[pixelIndex+1]=grey;
+              		img.pixels[pixelIndex+2]=grey;
+              		img.pixels[pixelIndex+3]=255;
+                    
+                }  
+        }
+   		img.updatePixels();
+    	return img;
+}
+
+function negative(img)
+{
+    img.loadPixels();
+    
+    for(var x=0;x<img.width;x++)
+        {
+            for(var y=0;y<img.width;y++)
+                {
+                    var pixelIndex=((img.width*y)+x)*4;
+                    var oldRed=img.pixels[pixelIndex+0]
+                    var oldGreen=img.pixels[pixelIndex+1]
+                    var oldBlue=img.pixels[pixelIndex+2];
+              		//subtracting the values of oldRed, oldGreen and oldBlue from white
+              		img.pixels[pixelIndex+0]=255-oldRed;
+              		img.pixels[pixelIndex+1]=255-oldGreen;
+              		img.pixels[pixelIndex+2]=255-oldBlue;
+             		img.pixels[pixelIndex+3]=255;
+                    
+                }  
+        }
+    	img.updatePixels();
+    	return img;
+}
+
+function redFilter(img)
+{
+    img.loadPixels();
+    
+    for(var x=0;x<img.width;x++)
+        {
+            for(var y=0;y<img.width;y++)
+                {
+                    var pixelIndex=((img.width*y)+x)*4;
+                    var oldRed=img.pixels[pixelIndex+0];
+              		//setting oldRed to its orignal while other holds 0
+              		img.pixels[pixelIndex+0]=oldRed;
+              		img.pixels[pixelIndex+1]=0;
+              		img.pixels[pixelIndex+2]=0;
+              		img.pixels[pixelIndex+3]=255;        
+                    
+                }  
+        }
+		img.updatePixels();
+    	return img;
+}
+
+function greenFilter(img)
+{
+    img.loadPixels();
+    
+    for(var x=0;x<img.width;x++)
+        {
+            for(var y=0;y<img.width;y++)
+                {
+                    var pixelIndex=((img.width*y)+x)*4;
+                    var oldGreen=img.pixels[pixelIndex+1]            
+              		img.pixels[pixelIndex+0]=0;
+              		//setting oldGed to its orignal while other holds 0
+              		img.pixels[pixelIndex+1]=oldGreen;
+              		img.pixels[pixelIndex+2]=0;
+              		img.pixels[pixelIndex+3]=255;        
+                    
+                }  
+        }
+    	img.updatePixels();
+    	return img;
+}
+
+function blueFilter(img)
+{
+    img.loadPixels();
+    
+    for(var x=0;x<img.width;x++)
+        {
+            for(var y=0;y<img.width;y++)
+                {
+                    var pixelIndex=((img.width*y)+x)*4;
+                    var oldBlue=img.pixels[pixelIndex+2];
+
+              		img.pixels[pixelIndex+0]=0;
+              		img.pixels[pixelIndex+1]=0;
+              		//setting oldBlue to its orignal while other holds 0
+              		img.pixels[pixelIndex+2]=oldBlue;
+              		img.pixels[pixelIndex+3]=255;          
+                }  
+        }
+    	img.updatePixels();
+    	return img;
+}
+
+
+
+function keyPressed()
+{
+   
+    if (keyCode === LEFT_ARROW) 
+    {
+        image(greyScale(imgIn), imgIn.width, 0);
+        preload();
+    }
+    
+   if (keyCode === RIGHT_ARROW) 
+    {      
+        image(negative(imgIn), imgIn.width, 0);
+        preload();
+    }
+    
+	if (keyCode === UP_ARROW) 
+    {      
+        image(radialBlurFilter(imgIn), imgIn.width, 0);
+        preload();
+    }
+    if (keyCode === 82) 
+    {      
+        image(redFilter(imgIn), imgIn.width, 0);
+        preload();
+    }
+     if (keyCode === 71) 
+    {      
+        image(greenFilter(imgIn), imgIn.width, 0);
+        preload();
+    }
+     if (keyCode === 66) 
+    {      
+        image(blueFilter(imgIn), imgIn.width, 0);
+        preload();
+    }
+
 }
